@@ -1,8 +1,8 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const locales = ["fr", "en"];
 
-export function middleware(req:NextRequest) {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Déjà sur /fr ou /en : on laisse passer
@@ -19,6 +19,7 @@ export function middleware(req:NextRequest) {
 
   try {
     const saved = req.cookies.get("lang")?.value;
+
     const accept = (
       req.headers.get("accept-language") ?? "fr"
     ).toLowerCase();
@@ -40,7 +41,6 @@ export function middleware(req:NextRequest) {
   return NextResponse.redirect(url);
 }
 
-// Ignore _next, api et les fichiers avec extension
 export const config = {
   matcher: ["/((?!_next|api|.*\\..*).*)"],
 };
