@@ -2,13 +2,22 @@ import Image from "next/image";
 import { FaGithub } from "react-icons/fa6";
 import { LuArrowUpRight, LuLock } from "react-icons/lu";
 import type { Project } from "../lib/api";
+import type { Dict } from "../lib/dictionaries";
 import Reveal from "./Reveal";
 import TechChip from "./TechChip";
 
-export default function ProjectCard({ project: p, index }: { project: Project; index: number }) {
+export default function ProjectCard({
+  project: p,
+  index,
+  t,
+}: {
+  project: Project;
+  index: number;
+  t: Dict["projects"];
+}) {
   const reversed = index % 2 === 1;
   const num = String(index + 1).padStart(2, "0");
-  const tags = p.stack.split(",").map((t) => t.trim()).filter(Boolean);
+  const tags = p.stack.split(",").map((s) => s.trim()).filter(Boolean);
   const isMobile = p.category?.toLowerCase().includes("mobile") ?? false;
   const hasImage = !!p.image && (p.image.startsWith("/") || p.image.startsWith("http"));
 
@@ -65,8 +74,8 @@ export default function ProjectCard({ project: p, index }: { project: Project; i
             )}
 
             <div className="mt-3 flex flex-wrap gap-2">
-              {tags.map((t) => (
-                <TechChip key={t} name={t} />
+              {tags.map((tag) => (
+                <TechChip key={tag} name={tag} />
               ))}
             </div>
           </div>
@@ -92,18 +101,28 @@ export default function ProjectCard({ project: p, index }: { project: Project; i
 
           <div className="mt-8 flex flex-wrap items-center gap-6 font-mono text-[11px] uppercase tracking-[0.2em]">
             {p.githubUrl && (
-              <a href={p.githubUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-accent hover:opacity-70">
-                <FaGithub size={15} /> Code source <LuArrowUpRight size={14} />
+              <a
+                href={p.githubUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 text-accent hover:opacity-70"
+              >
+                <FaGithub size={15} /> {t.source} <LuArrowUpRight size={14} />
               </a>
             )}
             {p.demoUrl && (
-              <a href={p.demoUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-accent hover:opacity-70">
-                Démo <LuArrowUpRight size={14} />
+              <a
+                href={p.demoUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 text-accent hover:opacity-70"
+              >
+                {t.demo} <LuArrowUpRight size={14} />
               </a>
             )}
             {!p.githubUrl && !p.demoUrl && (
               <span className="inline-flex items-center gap-2 text-muted">
-                <LuLock size={14} /> Code privé, projet professionnel
+                <LuLock size={14} /> {t.privateCode}
               </span>
             )}
           </div>
