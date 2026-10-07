@@ -50,15 +50,13 @@ export default async function Home({ params }: { params: { lang: string } }) {
     error = true;
   }
 
-  // Accroche (à déplacer dans dictionaries si tu préfères)
   const greet =
     lang === "fr"
       ? { hi: "Salut, je suis", and: "et je suis" }
       : { hi: "Hi, my name is", and: "and I'm a" };
   const marquee = skillItems.flat();
 
-  // Carte "API" : on affiche l'info qui N'EST PAS déjà dans le hero
-  // (stack par domaine), au lieu de répéter nom / rôle / statut / lieu.
+
   const preview = d.skills.groups.slice(0, 4).map((group, i) => ({
     group,
     items: skillItems[i].slice(0, 3),
@@ -162,11 +160,10 @@ export default async function Home({ params }: { params: { lang: string } }) {
                     {preview.map((p, idx) => (
                       <span key={p.group}>
                         {"  "}
-                        <span className="text-sky-300">"{p.group}"</span>: [
+<span className="text-sky-300">&quot;{p.group}&quot;</span>
                         {p.items.map((it, j) => (
                           <span key={it}>
-                            <span className="text-emerald-300">"{it}"</span>
-                            {j < p.items.length - 1 ? ", " : ""}
+<span className="text-emerald-300">&quot;{it}&quot;</span>                            {j < p.items.length - 1 ? ", " : ""}
                           </span>
                         ))}
                         ]{idx < preview.length - 1 ? "," : ""}{"\n"}
