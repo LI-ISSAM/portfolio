@@ -51,14 +51,14 @@ export default async function Home({ params }: { params: { lang: string } }) {
       <Navbar lang={lang} t={d.nav} />
 
       {/* HERO */}
-      <header className="relative flex min-h-screen flex-col items-center justify-center px-6 pb-36 pt-24 text-center sm:pb-24">
+      <header className="relative flex min-h-[100svh] flex-col items-center justify-center px-6 pb-16 pt-28 text-center">
         <p className="animate-fade-up text-lg text-muted md:text-2xl">
           {d.hero.hi}
           <span className="mx-2 bg-accent px-3 py-1 font-semibold text-white">Litimi Issam</span>
           {d.hero.and}
         </p>
         <h1
-          className="mt-4 animate-fade-up font-display text-[clamp(3.25rem,13vw,11rem)] uppercase leading-[0.9]"
+          className="mt-4 animate-fade-up font-display text-[clamp(3.5rem,min(15vw,25svh),14rem)] uppercase leading-[0.9]"
           style={{ animationDelay: "100ms" }}
         >
           {d.hero.title1}
@@ -79,40 +79,57 @@ export default async function Home({ params }: { params: { lang: string } }) {
             {d.hero.contact} <LuArrowRight className="transition group-hover:translate-x-1" />
           </a>
         </div>
-
-        <div className="absolute  inset-x-6 bottom-6 flex flex-col gap-4 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-muted sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-          <p className="flex items-center gap-2">
-            <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-green-500" />
-            {d.hero.status} : {d.hero.availability}
-          </p>
-
-          <p className="ml-4">
-            {d.hero.place} : {d.location}
-          </p>
-        </div>
       </header>
 
-      {/* À PROPOS */}
-      <Section id="apropos" label={d.about.label} title={d.about.title} center>
-        <div className="mx-auto mt-14 grid max-w-4xl items-center gap-10 md:grid-cols-[260px_1fr]">
+      {/* À PROPOS : texte à gauche, photo décalée avec cadre accent à droite */}
+      <Section id="apropos" label={d.about.label} title={d.about.title}>
+        <div className="mt-14 grid items-center gap-10 md:grid-cols-[1.25fr_1fr] md:gap-16">
           <Reveal>
-            <Image
-              src="/Profile.jpeg"
-              alt={d.about.photoAlt}
-              width={260}
-              height={325}
-              className="aspect-[4/5] w-full rounded-2xl border border-line object-cover"
-            />
-          </Reveal>
-          <Reveal delay={100}>
-            <div className="space-y-5 text-lg leading-relaxed">
-              {d.about.paragraphs.map((text) => (
-                <p key={text}>
+            <div className="space-y-6">
+              {d.about.paragraphs.map((text, i) => (
+                <p
+                  key={text}
+                  className={i === 0 ? "text-xl leading-relaxed md:text-2xl" : "text-base leading-relaxed text-muted"}
+                >
                   <Rich text={text} />
                 </p>
               ))}
+
+              {/* Statut + lieu */}
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line pt-6 font-mono text-[11px] uppercase tracking-[0.15em] text-muted">
+                <span className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-green-500" />
+                  {d.hero.status} : {d.hero.availability}
+                </span>
+                <span className="flex items-center gap-2">
+                  <LuMapPin size={14} className="shrink-0 text-accent" />
+                  {d.location}
+                </span>
+              </div>
             </div>
           </Reveal>
+
+          <div className="order-first md:order-none">
+            <Reveal delay={100}>
+              <div className="relative mx-auto w-full max-w-[320px] pb-6 md:ml-auto">
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bottom-6 translate-x-4 translate-y-4 rounded-3xl border-2 border-accent"
+                />
+                <Image
+                  src="/Profile.jpeg"
+                  alt={d.about.photoAlt}
+                  width={260}
+                  height={325}
+                  className="relative aspect-[4/5] w-full rounded-3xl border border-line object-cover"
+                />
+                <div className="absolute -left-4 bottom-0 rounded-xl border border-line bg-card px-4 py-3 shadow-lg">
+                  <p className="font-display text-lg uppercase leading-none">{d.hero.title2}</p>
+                  <p className="mt-1.5 font-mono text-[10px] uppercase tracking-widest text-muted">Litimi Issam</p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
         </div>
       </Section>
 
@@ -143,7 +160,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 className="group border-l-2 border-transparent bg-card p-8 transition hover:border-accent hover:bg-[var(--card-hover)]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs text-accent">0{i + 1}.</span>
+                  <span className="font-mono text-sm text-accent">0{i + 1}.</span>
                   <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent transition group-hover:bg-accent group-hover:text-white">
                     <Icon size={24} />
                   </span>
@@ -277,7 +294,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 </div>
               </div>
 
-              {/* RÉSEAUX : flèches ajoutées */}
+              {/* RÉSEAUX */}
               <div className="card p-6">
                 <h3 className="mb-4 text-lg font-semibold">{d.contact.networksTitle}</h3>
                 <div className="flex flex-wrap gap-3 text-sm">

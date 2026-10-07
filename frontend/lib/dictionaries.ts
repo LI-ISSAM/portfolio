@@ -19,7 +19,7 @@ const fr = {
     switchTo: "Switch to English",
   },
   hero: {
-    hi: "Salut, je m’appelle",
+    hi: "Bonjour, je m’appelle",
     and: "et je suis",
     title1: "Développeur",
     title2: "Full Stack Java",
