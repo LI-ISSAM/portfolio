@@ -137,7 +137,7 @@ const fr = {
   form: {
     name: "Nom",
     email: "Email",
-    message: "Message (10 caractères minimum)",
+    message: "Message",
     send: "Envoyer",
     sending: "Envoi…",
     success: "Message envoyé, merci !",
@@ -286,7 +286,7 @@ career: {
   form: {
     name: "Name",
     email: "Email",
-    message: "Message (10 characters minimum)",
+    message: "Message",
     send: "Send",
     sending: "Sending…",
     success: "Message sent, thank you!",
