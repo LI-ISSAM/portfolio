@@ -14,9 +14,9 @@ export const capabilityIcons: IconType[] = [LuServer, LuLayoutDashboard, LuGitBr
 
 // Même ordre que `skills.groups` dans les dictionnaires
 export const skillItems: string[][] = [
-  ["Java", "JavaScript", "Python", "C++", "SQL", "PL/SQL"],
+  ["Java", "JavaScript", "C++", "Python", "SQL", "PL/SQL"],
   ["Spring Boot", "REST API", "JDBC", "Microservices","Kafka"],
-  ["Vue.js", "React", "React Native", "Next.js", "HTML/CSS"],
+  ["Vue.js", "React", "Next.js", "React Native", "HTML/CSS"],
   ["PostgreSQL", "MongoDB", "MySQL", "SQLite"],
   ["Docker", "Git", "GitHub", "GitLab", "Maven", "Linux"],
 ];
