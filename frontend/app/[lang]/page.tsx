@@ -2,12 +2,13 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { FaGithub, FaLinkedin, FaWhatsapp } from "react-icons/fa6";
 import {
-  LuArrowRight,
+  LuArrowDown,
   LuArrowUpRight,
   LuAward,
   LuCloud,
   LuCode,
   LuDatabase,
+  LuDownload,
   LuGraduationCap,
   LuLayers,
   LuMail,
@@ -27,8 +28,11 @@ import TechChip from "../../components/TechChip";
 import ContactForm from "../../components/ContactForm";
 import Rich from "../../components/Rich";
 
-const heroLink =
-  "group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted transition hover:text-fg";
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+const primaryBtn = `inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3.5 font-mono text-xs font-semibold uppercase tracking-widest text-white shadow-sm transition hover:brightness-110 ${focusRing}`;
+const secondaryBtn = `inline-flex items-center gap-2 rounded-lg border border-line px-6 py-3.5 font-mono text-xs font-semibold uppercase tracking-widest transition hover:border-accent hover:text-accent ${focusRing}`;
+const iconBtn = `flex h-11 w-11 items-center justify-center rounded-lg border border-line text-muted transition hover:border-accent hover:text-accent ${focusRing}`;
 
 // Une icône par groupe de technologies (dans l'ordre de d.skills.groups)
 const groupIcons = [LuCode, LuServer, LuDatabase, LuWrench, LuCloud, LuLayers];
@@ -46,38 +50,152 @@ export default async function Home({ params }: { params: { lang: string } }) {
     error = true;
   }
 
+  // Accroche (à déplacer dans dictionaries si tu préfères)
+  const greet =
+    lang === "fr"
+      ? { hi: "Salut, je suis", and: "et je suis" }
+      : { hi: "Hi, my name is", and: "and I'm a" };
+  const marquee = skillItems.flat();
+
+  // Carte "API" : on affiche l'info qui N'EST PAS déjà dans le hero
+  // (stack par domaine), au lieu de répéter nom / rôle / statut / lieu.
+  const preview = d.skills.groups.slice(0, 4).map((group, i) => ({
+    group,
+    items: skillItems[i].slice(0, 3),
+  }));
+
   return (
     <>
       <Navbar lang={lang} t={d.nav} />
 
-      {/* HERO */}
-      <header className="relative flex min-h-[100svh] flex-col items-center justify-center px-6 pb-16 pt-28 text-center">
-        <p className="animate-fade-up text-lg text-muted md:text-2xl">
-          {d.hero.hi}
-          <span className="mx-2 bg-accent px-3 py-1 font-semibold text-white">Litimi Issam</span>
-          {d.hero.and}
-        </p>
-        <h1
-          className="mt-4 animate-fade-up font-display text-[clamp(3.5rem,min(15vw,25svh),14rem)] uppercase leading-[0.9]"
-          style={{ animationDelay: "100ms" }}
+      <style>{`
+        @keyframes hero-marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+        .hero-marquee { animation: hero-marquee 45s linear infinite; }
+        @keyframes name-underline { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+        .name-underline { animation: name-underline 0.9s 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+        @media (prefers-reduced-motion: reduce) { .hero-marquee, .name-underline { animation: none; } }
+      `}</style>
+
+      {/* HERO : titre typographique géant + carte API + bandeau techno */}
+      <header className="relative flex min-h-[100svh] w-full flex-col justify-between overflow-hidden pt-28">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/3 -z-10 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-accent/10 blur-3xl"
+        />
+
+        <div className="mx-auto w-full max-w-6xl animate-fade-up px-6 pb-16">
+          {/* Haut : centré, très typographique */}
+          <div className="flex flex-col items-center text-center">
+
+            <p className="text-lg md:text-2xl">
+              <span className="text-muted">{greet.hi}</span>{" "}
+              <span className="relative mx-1 inline-block pb-3 font-semibold">
+                LITIMI ISSAM
+                <span
+                  aria-hidden
+                  className="name-underline absolute bottom-1 left-0 h-[3px] w-full origin-left rounded-full bg-accent"
+                />
+                <span aria-hidden className="absolute bottom-[-3px] left-0 h-px w-full bg-accent/30" />
+              </span>{" "}
+              <span className="text-muted">{greet.and}</span>
+            </p>
+
+            <h1 className="mt-6 font-display uppercase leading-[0.88] tracking-tight text-[clamp(4rem,15vw,11.5rem)]">
+              <span className="block">{d.hero.title1}</span>
+              {/* Mot en contour : plein / vide pour casser la monotonie */}
+              <span className="block text-accent [-webkit-text-fill-color:transparent] [-webkit-text-stroke:2px_currentColor]">
+                {d.hero.title2}
+              </span>
+            </h1>
+          </div>
+
+          {/* Bas : aligné à gauche, texte + actions | carte API */}
+          <div className="mt-16 grid items-center gap-12 lg:grid-cols-[1fr_auto] lg:gap-20">
+            <div>
+              <p className="max-w-xl border-l-2 border-accent pl-6 text-lg leading-relaxed text-muted md:text-xl">
+                {d.hero.tagline}
+              </p>
+
+              <div className="mt-10 flex flex-wrap items-center gap-3">
+                <a href="#projets" className={primaryBtn}>
+                  {d.hero.seeProjects}
+                  <LuArrowDown size={16} />
+                </a>
+                <a href={d.cv} download className={secondaryBtn}>
+                  <LuDownload size={16} />
+                  {d.hero.cv}
+                </a>
+                <a href="#contact" className={secondaryBtn}>
+                  {d.hero.contact}
+                </a>
+              </div>
+
+              <div className="mt-8 flex items-center gap-3">
+                <a href={profile.github} target="_blank" rel="noreferrer" aria-label="GitHub" className={iconBtn}>
+                  <FaGithub size={18} />
+                </a>
+                <a href={profile.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" className={iconBtn}>
+                  <FaLinkedin size={18} />
+                </a>
+              </div>
+            </div>
+
+            {/* Carte "réponse d'API" : stack uniquement */}
+            <div
+              className="w-full max-w-md justify-self-center transition-transform duration-500 hover:rotate-0 lg:rotate-[1.5deg] lg:justify-self-end"
+              aria-hidden
+            >
+              <div className="overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-900 shadow-2xl shadow-slate-900/30">
+                <div className="flex items-center justify-between border-b border-slate-700/60 px-5 py-3">
+                  <div className="flex gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-slate-600" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-slate-600" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-slate-600" />
+                  </div>
+                  <span className="font-mono text-xs text-slate-400">GET /api/stack</span>
+                  <span className="rounded bg-green-500/15 px-2 py-0.5 font-mono text-xs text-green-400">200 OK</span>
+                </div>
+
+                <pre className="overflow-x-auto p-6 font-mono text-[13px] leading-7 text-slate-300">
+                  <code>
+                    {"{\n"}
+                    {preview.map((p, idx) => (
+                      <span key={p.group}>
+                        {"  "}
+                        <span className="text-sky-300">"{p.group}"</span>: [
+                        {p.items.map((it, j) => (
+                          <span key={it}>
+                            <span className="text-emerald-300">"{it}"</span>
+                            {j < p.items.length - 1 ? ", " : ""}
+                          </span>
+                        ))}
+                        ]{idx < preview.length - 1 ? "," : ""}{"\n"}
+                      </span>
+                    ))}
+                    {"}"}
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bandeau techno qui défile */}
+        <div
+          aria-hidden
+          className="overflow-hidden border-y border-line py-4 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
         >
-          {d.hero.title1}
-          <br />
-          {d.hero.title2}
-        </h1>
-        <p className="mt-6 max-w-xl animate-fade-up text-muted md:text-lg" style={{ animationDelay: "200ms" }}>
-          {d.hero.tagline}
-        </p>
-        <div className="mt-10 flex animate-fade-up flex-wrap justify-center gap-8" style={{ animationDelay: "300ms" }}>
-          <a href="#projets" className={heroLink}>
-            {d.hero.seeProjects} <LuArrowRight className="transition group-hover:translate-x-1" />
-          </a>
-          <a href={d.cv} download className={heroLink}>
-            {d.hero.cv} <LuArrowUpRight />
-          </a>
-          <a href="#contact" className={heroLink}>
-            {d.hero.contact} <LuArrowRight className="transition group-hover:translate-x-1" />
-          </a>
+          <ul className="hero-marquee flex w-max">
+            {[...marquee, ...marquee].map((item, i) => (
+              <li
+                key={`${item}-${i}`}
+                className="flex items-center gap-10 pr-10 font-mono text-xs uppercase tracking-[0.2em] text-muted"
+              >
+                {item}
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+              </li>
+            ))}
+          </ul>
         </div>
       </header>
 
@@ -94,15 +212,14 @@ export default async function Home({ params }: { params: { lang: string } }) {
                   <Rich text={text} />
                 </p>
               ))}
-
-              {/* Statut + lieu */}
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line pt-6 font-mono text-[11px] uppercase tracking-[0.15em] text-muted">
+              {/* Statut + lieu : libres, sans cadre */}
+              <div className="flex flex-col gap-3 pt-2 text-sm text-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8">
                 <span className="flex items-center gap-2">
                   <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-green-500" />
                   {d.hero.status} : {d.hero.availability}
                 </span>
                 <span className="flex items-center gap-2">
-                  <LuMapPin size={14} className="shrink-0 text-accent" />
+                  <LuMapPin size={16} className="shrink-0 text-accent" />
                   {d.location}
                 </span>
               </div>
@@ -123,10 +240,6 @@ export default async function Home({ params }: { params: { lang: string } }) {
                   height={325}
                   className="relative aspect-[4/5] w-full rounded-3xl border border-line object-cover"
                 />
-                <div className="absolute -left-4 bottom-0 rounded-xl border border-line bg-card px-4 py-3 shadow-lg">
-                  <p className="font-display text-lg uppercase leading-none">{d.hero.title2}</p>
-                  <p className="mt-1.5 font-mono text-[10px] uppercase tracking-widest text-muted">Litimi Issam</p>
-                </div>
               </div>
             </Reveal>
           </div>
@@ -257,7 +370,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
         </div>
       </Section>
 
-      {/* CONTACT */}
+      {/* CONTACT : le lieu est affiché ici (seule occurrence en texte) */}
       <Section id="contact" label={d.contact.label} title={d.contact.title} subtitle={d.contact.subtitle} center>
         <div className="mx-auto mt-14 grid max-w-4xl gap-6 md:grid-cols-[1.4fr_1fr]">
           <Reveal>
@@ -275,19 +388,18 @@ export default async function Home({ params }: { params: { lang: string } }) {
                   <a href={`mailto:${profile.email}`} className="flex items-center gap-3 hover:text-accent">
                     <LuMail size={18} className="text-accent" />
                     {profile.email}
-                    <span className="text-xs text-gray-500">(Click to email)</span>
                   </a>
                   <p className="flex items-center gap-3">
                     <LuMapPin size={18} className="text-accent" /> {d.location}
                   </p>
-                  <span className="inline-block border-l-2 border-blue-500 bg-blue-500/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-blue-400">
+                  <span className="inline-block border-l-2 border-accent bg-accent/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-accent">
                     {d.contact.badge}
                   </span>
                   <a
                     href={profile.whatsapp}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex w-fit items-center gap-2 rounded-lg border border-line px-4 py-2 transition hover:border-accent"
+                    className="flex w-fit items-center gap-2 rounded-lg border border-line px-4 py-2 transition hover:border-accent hover:text-accent"
                   >
                     <FaWhatsapp size={16} /> WhatsApp
                   </a>
