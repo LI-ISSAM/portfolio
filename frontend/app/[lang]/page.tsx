@@ -1,7 +1,20 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { FaEnvelope, FaGithub, FaLinkedin, FaWhatsapp } from "react-icons/fa6";
-import { LuArrowRight, LuArrowUpRight, LuAward, LuGraduationCap, LuMail, LuMapPin } from "react-icons/lu";
+import { FaGithub, FaLinkedin, FaWhatsapp } from "react-icons/fa6";
+import {
+  LuArrowRight,
+  LuArrowUpRight,
+  LuAward,
+  LuCloud,
+  LuCode,
+  LuDatabase,
+  LuGraduationCap,
+  LuLayers,
+  LuMail,
+  LuMapPin,
+  LuServer,
+  LuWrench,
+} from "react-icons/lu";
 import { getProjects, type Project } from "../../lib/api";
 import { capabilityIcons, profile, skillItems } from "../../lib/data";
 import { dictionaries } from "../../lib/dictionaries";
@@ -16,6 +29,9 @@ import Rich from "../../components/Rich";
 
 const heroLink =
   "group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted transition hover:text-fg";
+
+// Une icône par groupe de technologies (dans l'ordre de d.skills.groups)
+const groupIcons = [LuCode, LuServer, LuDatabase, LuWrench, LuCloud, LuLayers];
 
 export default async function Home({ params }: { params: { lang: string } }) {
   if (!isLocale(params.lang)) notFound();
@@ -64,12 +80,13 @@ export default async function Home({ params }: { params: { lang: string } }) {
           </a>
         </div>
 
-        <div className="absolute inset-x-6 bottom-6 flex flex-col gap-2 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="absolute  inset-x-6 bottom-6 flex flex-col gap-4 text-left font-mono text-[11px] uppercase tracking-[0.2em] text-muted sm:flex-row sm:items-center sm:justify-between sm:gap-2">
           <p className="flex items-center gap-2">
             <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-green-500" />
             {d.hero.status} : {d.hero.availability}
           </p>
-          <p>
+
+          <p className="ml-4">
             {d.hero.place} : {d.location}
           </p>
         </div>
@@ -99,12 +116,18 @@ export default async function Home({ params }: { params: { lang: string } }) {
         </div>
       </Section>
 
-      {/* PROJETS */}
+      {/* PROJETS : ligne verticale + petit cercle devant chaque projet */}
       <Section id="projets" label={d.projects.label} title={d.projects.title} subtitle={d.projects.subtitle}>
         {error && <p className="mt-10 text-red-500">{d.projects.error}</p>}
-        <div className="mt-20 space-y-28">
+        <div className="relative mt-20 space-y-28 border-l border-line pl-8 md:pl-12">
           {projects.map((p, i) => (
-            <ProjectCard key={p.id} project={p} index={i} t={d.projects} />
+            <div key={p.id} className="relative">
+              <span
+                aria-hidden
+                className="absolute -left-[39px] top-2 h-3 w-3 rounded-full bg-accent ring-4 ring-accent/20 md:-left-[55px]"
+              />
+              <ProjectCard project={p} index={i} t={d.projects} />
+            </div>
           ))}
         </div>
       </Section>
@@ -121,7 +144,9 @@ export default async function Home({ params }: { params: { lang: string } }) {
               >
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-xs text-accent">0{i + 1}.</span>
-                  <Icon size={22} className="text-muted transition group-hover:text-accent" />
+                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent transition group-hover:bg-accent group-hover:text-white">
+                    <Icon size={24} />
+                  </span>
                 </div>
                 <h3 className="mt-8 text-xl font-semibold transition group-hover:text-accent">{c.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted">{c.text}</p>
@@ -131,25 +156,37 @@ export default async function Home({ params }: { params: { lang: string } }) {
         </div>
 
         <div className="mt-16 grid gap-10 sm:grid-cols-2">
-          {d.skills.groups.map((group, i) => (
-            <Reveal key={group} delay={i * 60}>
-              <h3 className="mb-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted">{group}</h3>
-              <div className="flex flex-wrap gap-2">
-                {skillItems[i].map((item) => (
-                  <TechChip key={item} name={item} />
-                ))}
-              </div>
-            </Reveal>
-          ))}
+          {d.skills.groups.map((group, i) => {
+            const GroupIcon = groupIcons[i % groupIcons.length];
+            return (
+              <Reveal key={group} delay={i * 60}>
+                <h3 className="mb-4 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-card text-accent">
+                    <GroupIcon size={16} />
+                  </span>
+                  {group}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {skillItems[i].map((item) => (
+                    <TechChip key={item} name={item} />
+                  ))}
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
       </Section>
 
       {/* PARCOURS */}
       <Section id="parcours" label={d.career.label} title={d.career.title}>
-        <div className="mt-14 space-y-6">
+        <div className="relative mt-14 space-y-6 border-l border-line pl-8 md:pl-12">
           {d.career.experiences.map((e, i) => (
             <Reveal key={e.role} delay={i * 100}>
-              <div className="card p-6 md:p-8">
+              <div className="card relative p-6 md:p-8">
+                <span
+                  aria-hidden
+                  className="absolute -left-[39px] top-8 h-3 w-3 rounded-full bg-accent ring-4 ring-accent/20 md:-left-[55px]"
+                />
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="text-xl font-semibold">{e.role}</h3>
                   <span className="font-mono text-xs uppercase tracking-widest text-accent">{e.period}</span>
@@ -219,12 +256,14 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 <h3 className="mb-5 text-lg font-semibold">{d.contact.detailsTitle}</h3>
                 <div className="space-y-4 text-sm">
                   <a href={`mailto:${profile.email}`} className="flex items-center gap-3 hover:text-accent">
-                    <LuMail size={18} className="text-accent" /> {profile.email}
+                    <LuMail size={18} className="text-accent" />
+                    {profile.email}
+                    <span className="text-xs text-gray-500">(Click to email)</span>
                   </a>
                   <p className="flex items-center gap-3">
                     <LuMapPin size={18} className="text-accent" /> {d.location}
                   </p>
-                  <span className="inline-block rounded-full border border-green-500/40 bg-green-500/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-green-500">
+                  <span className="inline-block border-l-2 border-blue-500 bg-blue-500/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-blue-400">
                     {d.contact.badge}
                   </span>
                   <a
@@ -238,23 +277,34 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 </div>
               </div>
 
+              {/* RÉSEAUX : flèches ajoutées */}
               <div className="card p-6">
                 <h3 className="mb-4 text-lg font-semibold">{d.contact.networksTitle}</h3>
-                <div className="flex gap-5 text-sm">
-                  <a href={profile.github} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-accent">
+                <div className="flex flex-wrap gap-3 text-sm">
+                  <a
+                    href={profile.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex items-center gap-2 rounded-lg border border-line px-4 py-2 transition hover:border-accent hover:text-accent"
+                  >
                     <FaGithub size={18} /> GitHub
-                  </a>
-                  <a href={profile.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-accent">
-                    <FaLinkedin size={18} /> LinkedIn
+                    <LuArrowUpRight
+                      size={16}
+                      className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    />
                   </a>
                   <a
-  href="https://mail.google.com/mail/?view=cm&fs=1&to=litimi.dev@gmail.com"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="flex items-center gap-2 hover:text-accent"
->
-  <FaEnvelope size={18} /> Contact
-</a>
+                    href={profile.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex items-center gap-2 rounded-lg border border-line px-4 py-2 transition hover:border-accent hover:text-accent"
+                  >
+                    <FaLinkedin size={18} /> LinkedIn
+                    <LuArrowUpRight
+                      size={16}
+                      className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    />
+                  </a>
                 </div>
               </div>
             </div>
