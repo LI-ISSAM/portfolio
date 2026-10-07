@@ -57,6 +57,9 @@ export default async function Home({ params }: { params: { lang: string } }) {
       : { hi: "Hi, my name is", and: "and I'm a" };
   const marquee = skillItems.flat();
 
+  // Indication à côté de l'email (à déplacer dans dictionaries si tu préfères)
+  const mailHint = lang === "fr" ? "Cliquer pour écrire" : "Click to email";
+
   // Carte "API" : on affiche l'info qui N'EST PAS déjà dans le hero
   // (stack par domaine), au lieu de répéter nom / rôle / statut / lieu.
   const preview = d.skills.groups.slice(0, 4).map((group, i) => ({
@@ -383,14 +386,25 @@ export default async function Home({ params }: { params: { lang: string } }) {
               <div className="card p-6">
                 <h3 className="mb-5 text-lg font-semibold">{d.contact.detailsTitle}</h3>
                 <div className="space-y-4 text-sm">
-                  <a href={`mailto:${profile.email}`} className="flex items-center gap-3 hover:text-accent">
-                    <LuMail size={18} className="text-accent" />
-                    {profile.email}
+                  <a
+                    href={`mailto:${profile.email}`}
+                    title={mailHint}
+                    className={`group flex flex-wrap items-center gap-x-3 gap-y-2 hover:text-accent ${focusRing}`}
+                  >
+                    <LuMail size={18} className="shrink-0 text-accent" />
+                    <span className="break-all">{profile.email}</span>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent transition group-hover:bg-accent group-hover:text-white">
+                      {mailHint}
+                      <LuArrowUpRight
+                        size={12}
+                        className="transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
+                    </span>
                   </a>
                   <p className="flex items-center gap-3">
                     <LuMapPin size={18} className="text-accent" /> {d.location}
                   </p>
-                  <span className="inline-block border-l-2 border-accent bg-accent/10 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-accent">
+                  <span className="inline-block border-l-2 border-accent bg-accent/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-accent">
                     {d.contact.badge}
                   </span>
                   <a
