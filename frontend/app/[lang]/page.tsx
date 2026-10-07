@@ -50,13 +50,15 @@ export default async function Home({ params }: { params: { lang: string } }) {
     error = true;
   }
 
+  // Accroche (à déplacer dans dictionaries si tu préfères)
   const greet =
     lang === "fr"
       ? { hi: "Salut, je suis", and: "et je suis" }
       : { hi: "Hi, my name is", and: "and I'm a" };
   const marquee = skillItems.flat();
 
-
+  // Carte "API" : on affiche l'info qui N'EST PAS déjà dans le hero
+  // (stack par domaine), au lieu de répéter nom / rôle / statut / lieu.
   const preview = d.skills.groups.slice(0, 4).map((group, i) => ({
     group,
     items: skillItems[i].slice(0, 3),
@@ -88,7 +90,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
             <p className="text-lg md:text-2xl">
               <span className="text-muted">{greet.hi}</span>{" "}
               <span className="relative mx-1 inline-block pb-3 font-semibold">
-                LITIMI ISSAM
+                Litimi Issam
                 <span
                   aria-hidden
                   className="name-underline absolute bottom-1 left-0 h-[3px] w-full origin-left rounded-full bg-accent"
@@ -154,24 +156,23 @@ export default async function Home({ params }: { params: { lang: string } }) {
                   <span className="rounded bg-green-500/15 px-2 py-0.5 font-mono text-xs text-green-400">200 OK</span>
                 </div>
 
-                <pre className="overflow-x-auto p-6 font-mono text-[13px] leading-7 text-slate-300">
-                  <code>
-                    {"{\n"}
-                    {preview.map((p, idx) => (
-                      <span key={p.group}>
-                        {"  "}
-<span className="text-sky-300">&quot;{p.group}&quot;</span>
-                        {p.items.map((it, j) => (
-                          <span key={it}>
-<span className="text-emerald-300">&quot;{it}&quot;</span>                            {j < p.items.length - 1 ? ", " : ""}
-                          </span>
-                        ))}
-                        ]{idx < preview.length - 1 ? "," : ""}{"\n"}
-                      </span>
-                    ))}
-                    {"}"}
-                  </code>
-                </pre>
+                <div className="space-y-0.5 break-words p-6 font-mono text-[12.5px] leading-7 text-slate-300">
+                  <div>{"{"}</div>
+                  {preview.map((p, idx) => (
+                    <div key={p.group} className="pl-5">
+                      <span className="text-sky-300">&quot;{p.group}&quot;</span>
+                      <span>{": ["}</span>
+                      {p.items.map((it, j) => (
+                        <span key={it}>
+                          <span className="text-emerald-300">&quot;{it}&quot;</span>
+                          {j < p.items.length - 1 ? <span>{", "}</span> : null}
+                        </span>
+                      ))}
+                      <span>{idx < preview.length - 1 ? "]," : "]"}</span>
+                    </div>
+                  ))}
+                  <div>{"}"}</div>
+                </div>
               </div>
             </div>
           </div>
